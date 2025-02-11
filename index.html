@@ -104,7 +104,7 @@
                   <!-- Code Link. -->
                   <span class="link-block">
                     <a
-                      href="https://github.com/"
+                      href="https://github.com/ReStyle3D/ReStyle3D"
                       rel="noopener noreferrer"
                       class="external-link button is-normal is-rounded is-dark"
                     >
@@ -232,10 +232,10 @@
             </div>
           </div>
         </div>
-        <h2 class="content has-text-centered" style="max-width: 1000px; margin: 1rem auto;">
+        <h2 class="content" style="max-width: 950px; margin: 1rem auto;">
           Overview of <span class="methodname">ReStyle3D</span>. Given an interior design image (style image) and a 3D scene captured by video or multi-view images, ReStyle3D first transfers the appearance based
           on semantic correspondences to a single view, then lifts the stylization to multiple viewpoints using 3D-aware style lifting, achieving multi-view consistent
-          appearance transfer with fine-grained details
+          appearance transfer with fine-grained details.
         </h2>
       </div>
     </section>
@@ -288,7 +288,7 @@
                 </div>
               </div>
             </div>
-
+              <div class="content has-text-justified">
               <p>
                 <b
                   >Two-stage approach of 
@@ -305,7 +305,7 @@
                   a warp-and-refine model to complete the stylized image. This model is
                   applied across multiple views within our auto-regressive framework.
               </p>
-
+              </div>
               <br>
               <br>
               <!-- Quantitative table -->
@@ -318,8 +318,11 @@
                 src="./images/2d_transfer.png"
                 alt="Comparison with other methods"
               />
+              <div class="content has-text-justified">
               <b>Image appearance transfer results.</b> Our method enables precise appearance transfer between semantically corresponding
 elements, evidenced by the green rug and glass table (first row), textured cabinet (second row), and bedsheets (third row).
+              </div>
+              
             </div>
           </div>
         </div>
