@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Semantic Aware 3D Scene Stylization" />
+    <meta
+      name="keywords"
+      content="stylization, semantic correspondences, reconstruction"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+    <title>ReStyle3D: Scene-level Appearance Transfer with Semantic Correspondences</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>"
+    />
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-1FWSVCGZTG"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      gtag("js", new Date());
+
+      gtag("config", "G-1FWSVCGZTG");
+    </script>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./css/bulma.min.css" />
+    <link rel="stylesheet" href="./css/bulma-carousel.min.css" />
+    <link rel="stylesheet" href="./css/bulma-slider.min.css" />
+    <link rel="stylesheet" href="./css/twentytwenty.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./css/pages.css" />
+
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/jquery.event.move.js"></script>
+    <script src="./js/jquery.twentytwenty.js"></script>
+    <script src="./js/bulma-carousel.min.js"></script>
+    <script src="./js/bulma-slider.min.js"></script>
+    <script src="./js/fontawesome.all.min.js"></script>
+
+    <!--MathJax-->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
+    </script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+  </head>
+
+  <body>
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h2 class="title is-2 publication-title">🎨 <strong><span style="color: #006400">R</span><span style="color: #006666">e</span><span style="color: #006D6D">S</span><span style="color: #007373">t</span><span style="color: #007979">y</span><span style="color: #008080">l</span><span style="color: #008686">e</span><span style="color: #008B8B">3</span><span style="color: #009090">D</span></strong></h2>
+              <h1 class="title is-1 publication-title">
+                Scene-level Appearance Transfer with Semantic Correspondences
+              </h1>
+
+              <!-- Buttons -->
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <span class="link-block">
+                    <a
+                      href="http://arxiv.org/"
+                      rel="noopener noreferrer"
+                      class="external-link button is-normal is-rounded is-dark"
+                    >
+                      <span class="icon">
+                        <i class="fas fa-file-pdf" style="color: orangered"></i>
+                      </span>
+                      <span>Paper</span>
+                    </a>
+                  </span>
+
+                  <!-- Code Link. -->
+                  <span class="link-block">
+                    <a
+                      href="https://github.com/"
+                      rel="noopener noreferrer"
+                      class="external-link button is-normal is-rounded is-dark"
+                    >
+                      <span class="icon">
+                        <i class="fab fa-github"></i>
+                      </span>
+                      <span>Code </span>
+                      <!-- <img
+                        src="https://img.shields.io/github/stars/prs-eth/rollingdepth?style=for-the-badge&label=&color=333333&labelColor=333333"
+                        alt="GitHub stars"
+                        style="margin-top: 3px"
+                      /> -->
+                      <!-- <span>🌟</span> -->
+                    </a>
+                  </span>
+                  <!-- Hugging Face Space -->
+                  <style>
+                    .link-block a.button.is-dark.disabled {
+                      background-color: #4a4a4a;
+                      opacity: 0.8;
+                      cursor: not-allowed;
+                      pointer-events: none;
+                    }
+                  </style>
+                  <span class="link-block">
+                    <a
+                      href="https://huggingface.co/spaces/"
+                      rel="noopener noreferrer"
+                      class="external-link button is-normal is-rounded is-dark"
+                    >
+                      <span class="icon">&#129303;</span>
+                      <span>Model</span>
+                    </a>
+                  </span>
+                  <span class="link-block">
+                  <a
+                    href=""
+                    rel="noopener noreferrer"
+                    class="external-link button is-normal is-rounded is-dark"
+                  >
+                    <span class="icon">
+                      <img src="./images/dataset-icon.svg" alt="Dataset icon" width="16" height="16">
+                    </span>
+                    <span>Dataset</span>
+                  </a>
+                </span>
+                  <!--              &lt;!&ndash; Colab Link. &ndash;&gt;-->
+                  <!--              <span class="link-block">-->
+                  <!--                <a href="https://colab.research.google.com/drive/12G8reD13DdpMie5ZQlaFNo2WCGeNUH-u?usp=sharing"  rel="noopener noreferrer"-->
+                  <!--                   class="external-link button is-normal is-rounded is-dark">-->
+                  <!--                  <span class="icon">-->
+                  <!--                    <img src="images/colab.svg">-->
+                  <!--                  </span>-->
+                  <!--                  <span>&nbsp;Google Colab</span>-->
+                  <!--                </a>-->
+                  <!--              </span>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- (hidden), for video switching buttons -->
+    <img
+      id="btn_selected"
+      src="./images/circle-shadowed.svg"
+      style="display: none"
+    />
+    <img
+      id="btn_normal"
+      src="./images/circle-small.svg"
+      style="display: none"
+    />
+
+    <!-- Gallery -->
+    <section class="hero teaser is-small is-light">
+      <div class="container is-max-desktop has-text-centered">
+        <div class="hero-body">
+          <h2 class="title is-5"><strong><span style="color: #006400">R</span><span style="color: #006666">e</span><span style="color: #006D6D">S</span><span style="color: #007373">t</span><span style="color: #007979">y</span><span style="color: #008080">l</span><span style="color: #008686">e</span><span style="color: #008B8B">3</span><span style="color: #009090">D</span></strong> Facilitates Fast Redesign for Indoor Scenes</h2>
+          <!-- colorbar -->
+          <div class="container is-max-desktop has-text-centered">
+            <style>
+              .colorbar-img {
+                height: 15px;
+                width: 250px;
+              }
+              @media (max-width: 750px) {
+                .colorbar-img {
+                  width: 150px;
+                }
+              }
+            </style>
+          </div>
+          <!-- Single video -->
+          <video
+            muted
+            autoplay="autoplay"
+            loop="loop"
+            width="100%"
+            controls
+            playsinline
+          >
+            <source src="./video/one-to-all/video0.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero is-small">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <!-- Teaser figure -->
+          <div class="columns is-centered has-text-centered">
+            <div class="column is-fll">
+              <div class="publication-teaser">
+                <img 
+                  src="images/teaser.jpg" 
+                  alt="ReStyle3D method teaser figure"
+                  class="publication-teaser-img"
+                  style="width: 120%;"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <h2 class="content has-text-centered" style="max-width: 1000px; margin: 1rem auto;">
+          Overview of <span class="methodname">ReStyle3D</span>. Given an interior design image (style image) and a 3D scene captured by video or multi-view images, ReStyle3D first transfers the appearance based
+          on semantic correspondences to a single view, then lifts the stylization to multiple viewpoints using 3D-aware style lifting, achieving multi-view consistent
+          appearance transfer with fine-grained details
+        </h2>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <!-- Abstract -->
+            <h3 class="title is-3">Abstract</h3>
+            <div class="content has-text-justified">
+              <p>
+                We introduce ReStyle3D, a novel framework for scene-level appearance
+                transfer from a single style image to a real-world scene represented by
+                multiple views. The method combines explicit semantic correspondences
+                with multi-view consistency to achieve precise and coherent stylization.
+                Unlike conventional stylization methods that apply a reference style globally,
+                ReStyle3D uses open-vocabulary segmentation to establish dense, instancelevel correspondences between the style and real-world images. This ensures
+                that each object is stylized with semantically matched textures. ReStyle3D
+                first transfers the style to a single view using a training-free semanticattention mechanism in a diffusion model. It then lifts the stylization to
+                additional views via a learned warp-and-refine network guided by monocular
+                depth and pixel-wise correspondences. Experiments show that ReStyle3D
+                consistently outperforms prior methods in structure preservation, perceptual
+                style similarity, and multi-view coherence. User studies further validate its
+                ability to produce photo-realistic, semantically faithful results. Our code,
+                pretrained models, and dataset will be publicly released, to support new
+                applications in interior design, virtual staging, and 3D-consistent stylization.
+              </p>
+            </div>
+
+            <!-- Method. -->
+            <h2 class="title is-3">How it works</h2>
+            <div class="content has-text-justified">
+              <div class="columns is-centered " style="align-items: center;">
+                <div class="column is-half">
+                  <img
+                    id="method_inference_1"
+                    width="100%"
+                    src="./images/stage1.gif"
+                    alt="Method Stage 1"
+                  />
+                </div>
+                <div class="column is-half">
+                  <img
+                    id="method_inference_2"
+                    width="100%"
+                    src="./images/stage2.gif"
+                    alt="Method Stage 2"
+                  />
+                </div>
+              </div>
+            </div>
+
+              <p>
+                <b
+                  >Two-stage approach of 
+                  <span class="content"><span style="color: #006400">R</span><span style="color: #006666">e</span><span style="color: #006D6D">S</span><span style="color: #007373">t</span><span style="color: #007979">y</span><span style="color: #008080">l</span><span style="color: #008686">e</span><span style="color: #008B8B">3</span><span style="color: #009090">D</span></span>
+                  Pipeline. 
+                  </b>
+                  The style and source images
+                  are first noised back to step 𝑇 using DDPM inversion [2024]. During the
+                  generation of the stylized output, the extended self-attention layer transfers
+                  style information from the style to the output latent. This process is further
+                  guided by a semantic matching mask, which allows for precise control. Stereo correspondences are extracted
+                  from the original image pair and used to warp the stylized image
+                  to the second image. To address missing pixels from warping, we train
+                  a warp-and-refine model to complete the stylized image. This model is
+                  applied across multiple views within our auto-regressive framework.
+              </p>
+
+              <br>
+              <br>
+              <!-- Quantitative table -->
+              <h2 class="title is-3 has-text-centered">
+                Semantic Appearance Transfer
+              </h2>
+              <img
+                id="comparison"
+                width="150%"
+                src="./images/2d_transfer.png"
+                alt="Comparison with other methods"
+              />
+              <b>Image appearance transfer results.</b> Our method enables precise appearance transfer between semantically corresponding
+elements, evidenced by the green rug and glass table (first row), textured cabinet (second row), and bedsheets (third row).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dataset comparison -->
+    <h2 class="title is-3 has-text-centered">
+      End-to-end Results
+    </h2>
+    <section class="hero teaser is-small">
+      <div class="container is-max-desktop has-text-centered">
+        <div class="hero-body">
+          <h2 class="title is-4 has-text-centered">
+            Applying different styles to the same scene
+          </h2>
+          <video
+            id="myVideo_a3"
+            muted
+            autoplay="autoplay"
+            loop="loop"
+            width="100%"
+            controls
+            playsinline
+          ></video>
+          <div width="100%" class="pages" id="page_a3">
+            <img src="./images/arrow-left-round.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/arrow-right-round.svg" />
+          </div>
+          <script>
+            $(function () {
+              let src = [
+                "./video/one-to-all/video1.mp4",
+                "./video/one-to-all/video2.mp4",
+                "./video/one-to-all/video0.mp4",
+              ];
+              const player = $("#myVideo_a3")[0];
+              const button = $("#page_a3 img");
+              const size = src.length;
+              let index = 0;
+              let old = -1;
+              function go() {
+                if (old >= 0) {
+                  button[old + 1].src = btn_normal.src;
+                }
+                button[index + 1].src = btn_selected.src;
+                old = index;
+                player.src = src[index];
+                player.load();
+              }
+              go();
+              button.click(function () {
+                let x = $(this).index();
+                if (x == 0) {
+                  if (index > 0) {
+                    index--;
+                    go();
+                  }
+                } else if (x == size + 1) {
+                  if (index < size - 1) {
+                    index++;
+                    go();
+                  }
+                } else if (x > 0 && x <= size) {
+                  index = x - 1;
+                  go();
+                }
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <!-- In-the-wild comparison -->
+    <section class="hero teaser is-small">
+      <div class="container is-max-desktop has-text-centered">
+        <div class="hero-body">
+          <h2 class="title is-4 has-text-centered">
+            Transforming different rooms to the same style
+          </h2>
+          <!-- For a new group, change all `_a2` to `_a2` -->
+          <video
+            id="myVideo_a2"
+            muted
+            autoplay="autoplay"
+            loop="loop"
+            width="100%"
+            controls
+            playsinline
+          ></video>
+          <!-- small circles, should correspond to number of videos -->
+          <div width="100%" class="pages" id="page_a2">
+            <img src="./images/arrow-left-round.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/arrow-right-round.svg" />
+          </div>
+          <script>
+            $(function () {
+              let src = [
+                "./video/all-to-one/video1.mp4",
+                "./video/all-to-one/video2.mp4",
+                "./video/all-to-one/video3.mp4",
+              ];
+              const player = $("#myVideo_a2")[0];
+              const button = $("#page_a2 img");
+              const size = src.length;
+              let index = 0;
+              let old = -1;
+              function go() {
+                if (old >= 0) {
+                  button[old + 1].src = btn_normal.src;
+                }
+                button[index + 1].src = btn_selected.src;
+                old = index;
+                player.src = src[index];
+                player.load();
+              }
+              go();
+              button.click(function () {
+                let x = $(this).index();
+                if (x == 0) {
+                  if (index > 0) {
+                    index--;
+                    go();
+                  }
+                } else if (x == size + 1) {
+                  if (index < size - 1) {
+                    index++;
+                    go();
+                  }
+                } else if (x > 0 && x <= size) {
+                  index = x - 1;
+                  go();
+                }
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <!-- In-the-wild comparison -->
+    <section class="hero teaser is-small">
+      <div class="container is-max-desktop has-text-centered">
+        <div class="hero-body">
+          <h2 class="title is-4 has-text-centered">
+           Reconstruction on Stylized Images
+          </h2>
+          <!-- For a new group, change all `_a2` to `_a2` -->
+          <video
+            id="myVideo_a4"
+            muted
+            autoplay="autoplay"
+            loop="loop"
+            width="100%"
+            controls
+            playsinline
+          ></video>
+          <!-- small circles, should correspond to number of videos -->
+          <div width="100%" class="pages" id="page_a4">
+            <img src="./images/arrow-left-round.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/circle-small.svg" />
+            <img src="./images/arrow-right-round.svg" />
+          </div>
+          <script>
+            $(function () {
+              let src = [
+                "./video/reconstruction/living1.mp4",
+                "./video/reconstruction/bedroom1.mp4",
+                "./video/reconstruction/bedroom2.mp4",
+              ];
+              const player = $("#myVideo_a4")[0];
+              const button = $("#page_a4 img");
+              const size = src.length;
+              let index = 0;
+              let old = -1;
+              function go() {
+                if (old >= 0) {
+                  button[old + 1].src = btn_normal.src;
+                }
+                button[index + 1].src = btn_selected.src;
+                old = index;
+                player.src = src[index];
+                player.load();
+              }
+              go();
+              button.click(function () {
+                let x = $(this).index();
+                if (x == 0) {
+                  if (index > 0) {
+                    index--;
+                    go();
+                  }
+                } else if (x == size + 1) {
+                  if (index < size - 1) {
+                    index++;
+                    go();
+                  }
+                } else if (x > 0 && x <= size) {
+                  index = x - 1;
+                  go();
+                }
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pt-0" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <h2 class="title">Citation</h2>
+        <pre class="selectable">
+
+</pre>
+      </div>
+    </section>
+
+    <footer class="footer pt-4 pb-0">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <div class="content">
+              <p>
+                Website template based on
+                <a href="https://github.com/nerfies/nerfies.github.io">
+                  Nerfies
+                </a>
+                and licensed under
+                <a
+                  rel="license"
+                  href="http://creativecommons.org/licenses/by-sa/4.0/"
+                >
+                  CC-BY-SA-4.0 </a
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
