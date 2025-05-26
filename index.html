@@ -273,7 +273,7 @@
     <section class="section pt-0">
       <div class="container is-max-desktop">
         <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
+          <div class="column is-five-fifths">
             <!-- Abstract -->
             <h3 class="title is-3">Abstract</h3>
             <div class="content has-text-justified">
@@ -341,18 +341,32 @@
               <br>
               <br>
               <!-- Quantitative table -->
-              <h2 class="title is-3 has-text-centered">
-                Semantic Appearance Transfer
-              </h2>
-              <img
-                id="comparison"
-                width="150%"
-                src="./images/2d_transfer.png"
-                alt="Comparison with other methods"
-              />
-              <div class="content has-text-justified">
-              <b>Image appearance transfer results.</b> Our method enables precise appearance transfer between semantically corresponding
-elements, evidenced by the green rug and glass table (first row), textured cabinet (second row), and bedsheets (third row).
+              <section class="section">
+              <h2 class="title is-3 has-text-centered">Semantic Appearance Transfer</h2>
+
+              <!-- column labels -->
+              <div class="columns is-mobile">
+                <div class="column is-two has-text-centered"><strong> Source Image</strong></div>
+                <div class="column is-two has-text-centered"><strong>Style Image</strong></div>
+                <div class="column is-two has-text-centered"><strong>ReStyle3D (Ours)</strong></div>
+                <div class="column is-two has-text-centered"><strong>Cross-Img-Attn.</strong></div>
+                <div class="column is-two has-text-centered"><strong>IP-Adapter</strong></div>
+                <div class="column is-two has-text-centered"><strong>StyleID</strong></div>
+              </div>
+              <!-- the full‐width composite figure -->
+              <figure class="image is-fullwidth">
+                <img
+                  id="comparison"
+                  src="./images/2d_transfer.png"
+                  alt="Comparison with other methods"
+                >
+                <figcaption>
+                  <!-- <strong>Image appearance transfer results.</strong> -->
+                  Our method enables precise appearance transfer between semantically corresponding
+                  elements.
+                </figcaption>
+              </figure>
+            </section>
               </div>
               
             </div>
